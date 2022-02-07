@@ -1,0 +1,2 @@
+LICENSE.orig applies to the original content which this project is based on. Source: https://github.com/philhawthorne/docker-influxdb-grafana
+LICENSE.additions applies to the additions made in this project, specifically related to fetching and processing data from Oura.

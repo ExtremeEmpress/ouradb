@@ -1,0 +1,2 @@
+# Polls once per hour. Change as desired.
+0 * * * * /usr/bin/python3 /etc/oura/oura_post_to_influxdb.py
