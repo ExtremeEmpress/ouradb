@@ -92,4 +92,4 @@ ENV/
 .idea/
 
 # Protect our PAT from being uploaded to Github by mistake
-OURA/PAT.txt
+oura/PAT.txt
