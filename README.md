@@ -10,7 +10,7 @@ This repository also contains a python script, which can alone be used for query
 
 As the very first step, you need to get yourself a Personal Access Token (PAT) from the Oura website, here: https://cloud.ouraring.com/personal-access-tokens
 
-Select "Create New Personal Access Token", and store the token in a safe place. Copy the 32 character long PAT to the file oura/PAT.txt in the repository files.
+Select "Create New Personal Access Token", and store the token in a safe place. Copy the oura/PAT_empty.txt file to a file named oura/PAT.txt and copy the 32 character long PAT to the new file.
 
 ## Second step (optional): Do a test query
 
