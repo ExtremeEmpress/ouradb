@@ -109,7 +109,7 @@ Now, you want to create a dashboard. As an example we will create a dashboard wi
   GROUP BY time($_interval) fill(linear)
 4. On the right side, give the Panel a title.
 5. On the top right, select "Save". Give your Dashboard a name.
-6. To change the amount of days showin on the panel, at the top right you can change the time. Select for example "Last 30 days".
+6. To change the amount of days showing on the panel, at the top right you can change the time. Select for example "Last 30 days".
 ```
 
 Now you are ready to start creating your own panels and exploring your Oura data!
