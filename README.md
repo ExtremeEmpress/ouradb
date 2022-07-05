@@ -10,7 +10,7 @@ This repository also contains a python script, which can alone be used for query
 
 As the very first step, you need to get yourself a Personal Access Token (PAT) from the Oura website, here: https://cloud.ouraring.com/personal-access-tokens
 
-Select "Create New Personal Access Token", and store the token in a safe place. Copy the 32 character long PAT to the file oura/PAT.txt in the repository files.
+Select "Create New Personal Access Token", and store the token in a safe place. Copy the oura/PAT_empty.txt file to a file named oura/PAT.txt and copy the 32 character long PAT to the new file.
 
 ## Second step (optional): Do a test query
 
@@ -109,7 +109,7 @@ Now, you want to create a dashboard. As an example we will create a dashboard wi
   GROUP BY time($_interval) fill(linear)
 4. On the right side, give the Panel a title.
 5. On the top right, select "Save". Give your Dashboard a name.
-6. To change the amount of days showin on the panel, at the top right you can change the time. Select for example "Last 30 days".
+6. To change the amount of days showing on the panel, at the top right you can change the time. Select for example "Last 30 days".
 ```
 
 Now you are ready to start creating your own panels and exploring your Oura data!
