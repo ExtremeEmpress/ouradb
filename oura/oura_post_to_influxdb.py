@@ -9,9 +9,11 @@ import oura_query
 def get_data_one_day(date,pat):
     end_date=datetime.strptime(date,'%Y-%m-%d')
     start_date=end_date - timedelta(days=1)
+    print(end_date)
+    
 
     sleep_data = oura_query.fetch_data(start_date,end_date,'sleep',pat)
-    readiness_data = oura_query.fetch_data(start_date,end_date,'readiness',pat)
+    readiness_data = oura_query.fetch_data(start_date,end_date,'daily_readiness',pat)
  
     if sleep_data == None:
         print("No data, exiting")
@@ -19,9 +21,17 @@ def get_data_one_day(date,pat):
 
 
     # Clean out array type data
-    sleep_data.pop('hr_5min', None)
-    sleep_data.pop('hypnogram_5min', None)
-    sleep_data.pop('rmssd_5min', None)
+    sleep_data.pop('heart_rate', None)
+    sleep_data.pop('hrv', None)
+    sleep_data.pop('movement_30_sec', None)
+    sleep_data.pop('sleep_phase_5_min', None)
+    sleep_data.pop('low_battery_alert', None)
+    sleep_data.pop('type', None)
+    sleep_data.pop('readiness', None)
+    readiness_data.pop('contributors', None)
+ 
+
+
 
     # Merge sleep and readiness data
     data = sleep_data
@@ -66,6 +76,7 @@ else:
     start_date = datetime.strptime(args.start,'%Y-%m-%d')
     end_date = datetime.strptime(args.end,'%Y-%m-%d')
 
+
    
 pat = open("/etc/oura/PAT.txt","r").read(32)
 
@@ -89,5 +100,6 @@ client_ouradb = InfluxDBClient(host="localhost", port=8086, database="ouradb")
 while start_date <= end_date:
     data = get_data_one_day(end_date.strftime('%Y-%m-%d'),pat)
     client_ouradb.write_points(data)
+    #print(json.dumps(data, indent=4))
     end_date = end_date - timedelta(days=1)
 

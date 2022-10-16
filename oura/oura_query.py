@@ -7,20 +7,24 @@ import re
 
 
 def fetch_data(start, end, datatype, pat_data):
-    path = "https://api.ouraring.com/v1/{}?start={}&end={}".format(datatype, start.strftime('%Y-%m-%d'),end.strftime('%Y-%m-%d'))
-    header = {"Authorization": "Bearer {}".format(pat_data)}
+    datatype="daily_sleep"
+    url = f"https://api.ouraring.com/v2/usercollection/{datatype}"
+    headers = {"Authorization": f"Bearer {pat_data}"}
+    params = {"start_date": f"{start.strftime('%Y-%m-%d')}", 'end_date': f"{end.strftime('%Y-%m-%d')}"}
+    response = requests.request('GET', url, headers=headers, params=params).json()
+    resp = response["data"][0]
+    #print (json.dumps(resp, indent=4))
 
-    response = requests.get(path,headers=header).json()
-
-    if not response[datatype]:
+    if not response["data"]:
         print("No {} data yet for time window, exiting".format(datatype))
         exit()
 
-    resp = response[datatype][0]
+   
 
     # All data should be consistent in influxdb, so turn ints to floats
     resp = {k:float(v) if type(v) == int else v for k,v in resp.items()}
     return resp
+
 
 def main():
 
@@ -36,7 +40,7 @@ def main():
         exit()
 
     date_pattern = re.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
-    datatype_pattern = re.compile("^(sleep|readiness|activity)$")
+    datatype_pattern = re.compile("^(sleep|daily_readiness|daily_activity)$")
     pat_pattern = re.compile("^[A-Z0-9]{32}$")
     
     if args.start:
@@ -76,7 +80,6 @@ def main():
     while start_date <= end_date:
         tmp_date = end_date - timedelta(days=1)
         data = fetch_data(tmp_date,end_date,datatype,pat)
-        print(json.dumps(data))
         end_date = tmp_date
     
 if __name__ == "__main__":
