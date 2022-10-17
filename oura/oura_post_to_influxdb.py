@@ -9,7 +9,6 @@ import oura_query
 def get_data_one_day(date,pat):
     end_date=datetime.strptime(date,'%Y-%m-%d')
     start_date=end_date - timedelta(days=1)
-    print(end_date)
     
 
     sleep_data = oura_query.fetch_data(start_date,end_date,'sleep',pat)

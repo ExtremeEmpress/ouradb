@@ -22,16 +22,16 @@ python3 oura/oura_query.py --pat=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 If you don't want to have a database and Grafana, you can just manually browse your data with this script.
 
-Example: Get temperature deviations with 2 decimal accuracy for first week of January 2022 (requires jq):
+Example: Get temperature deviations with 2 decimal accuracy for first week of October 2022 (requires jq):
 
 ```sh
-user@machine:~/repos/ouradb$ python3 oura/oura_query.py --pat=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --start=2022-01-01 --end=2022-01-07|jq '.temperature_deviation'
--0.14
--0.1
--0.03
--0.45
--0.13
-0
+user@machine:~/repos/ouradb$ python3 oura/oura_query.py --pat=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --start=2022-10-01 --end=2022-10-07|jq '.temperature_deviation'
+0.17
+0.28
+0.19
+0.14
+0.31
+0.34
 0.15
 ```
 
