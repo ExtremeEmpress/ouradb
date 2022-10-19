@@ -1,3 +1,5 @@
+#!/bin/python3
+
 from datetime import datetime, timedelta
 import requests
 import argparse
@@ -11,16 +13,27 @@ def fetch_data(start, end, datatype, pat_data):
     headers = {"Authorization": f"Bearer {pat_data}"}
     params = {"start_date": f"{start.strftime('%Y-%m-%d')}", 'end_date': f"{end.strftime('%Y-%m-%d')}"}
     response = requests.request('GET', url, headers=headers, params=params).json()
-    resp = response["data"][0]
 
     if not response["data"]:
         print("No {} data yet for time window, exiting".format(datatype))
         exit()
 
-   
+    resp = response["data"][0]
 
+    #If we're looking for sleep...cycles through the items in response dictionary, finds the one that contains long_sleep, sets the active resp to that section. Otherwise naps make amess of the data.
+    indexstart = 0
+    indexceiling = len(response["data"]) - 1 
+    if datatype == 'sleep':
+        while indexstart <= indexceiling:
+            resp2 = response["data"][indexstart]
+            for k, v in resp2.items():
+                if v == "long_sleep":
+                    resp = resp2
+            indexstart+= 1
+        
     # All data should be consistent in influxdb, so turn ints to floats
     resp = {k:float(v) if type(v) == int else v for k,v in resp.items()}
+    print(end)
     return resp
 
 

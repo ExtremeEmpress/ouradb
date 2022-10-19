@@ -1,3 +1,5 @@
+#!/bin/python3
+
 from datetime import datetime, timedelta
 from influxdb import InfluxDBClient
 import requests
@@ -28,6 +30,7 @@ def get_data_one_day(date,pat):
     sleep_data.pop('type', None)
     sleep_data.pop('readiness', None)
     readiness_data.pop('contributors', None)
+    
  
 
 
@@ -40,7 +43,7 @@ def get_data_one_day(date,pat):
              "time": data['bedtime_end'],
              "fields": data
     },]
-
+    
     return post_data
 
 
@@ -77,9 +80,10 @@ else:
 
 
    
-pat = open("/etc/oura/PAT.txt","r").read(32)
+#pat = open("/etc/oura/PAT.txt","r").read(32)
+pat = open("PAT.txt","r").read(32)
 
-client_ouradb = InfluxDBClient(host="localhost", port=8086, database="ouradb")
+client_ouradb = InfluxDBClient(host="192.168.42.107", port=8086, database="ouradbTEST2")
 
 # If you wish to reduce queries to the Oura API, you can uncomment the following steps.
 # This way no more queries are done after data has already been received that day.
@@ -99,6 +103,7 @@ client_ouradb = InfluxDBClient(host="localhost", port=8086, database="ouradb")
 while start_date <= end_date:
     data = get_data_one_day(end_date.strftime('%Y-%m-%d'),pat)
     client_ouradb.write_points(data)
+    #print(end_date)
     #print(json.dumps(data, indent=4))
     end_date = end_date - timedelta(days=1)
 
