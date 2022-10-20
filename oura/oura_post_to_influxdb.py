@@ -1,5 +1,4 @@
 #!/bin/python3
-
 from datetime import datetime, timedelta
 from influxdb import InfluxDBClient
 import requests
@@ -78,12 +77,10 @@ else:
     start_date = datetime.strptime(args.start,'%Y-%m-%d')
     end_date = datetime.strptime(args.end,'%Y-%m-%d')
 
-
    
-#pat = open("/etc/oura/PAT.txt","r").read(32)
-pat = open("PAT.txt","r").read(32)
+pat = open("/etc/oura/PAT.txt","r").read(32)
 
-client_ouradb = InfluxDBClient(host="192.168.42.107", port=8086, database="ouradbTEST2")
+client_ouradb = InfluxDBClient(host="localhost", port=8086, database="ouradb")
 
 # If you wish to reduce queries to the Oura API, you can uncomment the following steps.
 # This way no more queries are done after data has already been received that day.

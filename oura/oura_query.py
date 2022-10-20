@@ -1,5 +1,4 @@
 #!/bin/python3
-
 from datetime import datetime, timedelta
 import requests
 import argparse
