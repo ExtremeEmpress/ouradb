@@ -1,4 +1,3 @@
-#!/bin/python3
 from datetime import datetime, timedelta
 from influxdb import InfluxDBClient
 import requests
