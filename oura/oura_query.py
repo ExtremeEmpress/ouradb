@@ -1,4 +1,3 @@
-#!/bin/python3
 from datetime import datetime, timedelta
 import requests
 import argparse
@@ -32,7 +31,6 @@ def fetch_data(start, end, datatype, pat_data):
         
     # All data should be consistent in influxdb, so turn ints to floats
     resp = {k:float(v) if type(v) == int else v for k,v in resp.items()}
-    print(end)
     return resp
 
 
