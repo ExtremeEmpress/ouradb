@@ -28,6 +28,11 @@ def fetch_data(start, end, datatype, pat_data):
                 if v == "long_sleep":
                     resp = resp2
             indexstart+= 1
+    
+    #Adds the contributors section at level 0 of our readiness json. Includes stats like hrv and sleep balance
+    if datatype == 'daily_readiness':
+        resp2 = response["data"][0]["contributors"]
+        resp.update(resp2)
         
     # All data should be consistent in influxdb, so turn ints to floats
     resp = {k:float(v) if type(v) == int else v for k,v in resp.items()}
