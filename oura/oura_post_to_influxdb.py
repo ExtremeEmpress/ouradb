@@ -27,7 +27,6 @@ def get_data_one_day(date,pat):
     sleep_data.pop('low_battery_alert', None)
     sleep_data.pop('type', None)
     sleep_data.pop('readiness', None)
-    readiness_data.pop('contributors', None)
     
  
 

@@ -32,6 +32,7 @@ def fetch_data(start, end, datatype, pat_data):
     #Adds the contributors section at level 0 of our readiness json. Includes stats like hrv and sleep balance
     if datatype == 'daily_readiness':
         resp2 = response["data"][0]["contributors"]
+        resp.pop('contributors', None)
         resp.update(resp2)
         
     # All data should be consistent in influxdb, so turn ints to floats
