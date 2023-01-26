@@ -62,11 +62,11 @@ def main():
             exit()
 
     if not args.start and not args.end:
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=1)
+        start_date = datetime.now()
+        end_date = start_date + timedelta(days=1)
     else:
-        start_date = datetime.strptime(args.start,'%Y-%m-%d')
-        end_date = datetime.strptime(args.end,'%Y-%m-%d')
+        start_date = datetime.strptime(args.start,'%Y-%m-%d') + timedelta(days=1)
+        end_date = datetime.strptime(args.end,'%Y-%m-%d') + timedelta(days=1)
 
     if args.datatype:
         if not datatype_pattern.match(args.datatype):

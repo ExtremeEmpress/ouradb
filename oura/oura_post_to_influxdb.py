@@ -101,12 +101,12 @@ if args.end:
 only_today = False
 
 if not args.start and not args.end:
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=1)
+    start_date = datetime.now()
+    end_date = start_date + timedelta(days=1)
     only_today = True
 else:
-    start_date = datetime.strptime(args.start,'%Y-%m-%d')
-    end_date = datetime.strptime(args.end,'%Y-%m-%d')
+    start_date = datetime.strptime(args.start,'%Y-%m-%d') + timedelta(days=1)
+    end_date = datetime.strptime(args.end,'%Y-%m-%d') + timedelta(days=1)
 
    
 pat = open("/etc/oura/PAT.txt","r").read(32)
