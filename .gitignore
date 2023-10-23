@@ -93,8 +93,6 @@ ENV/
 
 # Protect our PAT from being uploaded to Github by mistake
 oura/PAT.txt
-etc/oura/PAT.txt
-etc/oura/INFLUXDBTOKEN.txt
 bin
 lib64
 pyvenv.cfg
