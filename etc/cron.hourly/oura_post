@@ -1,0 +1,2 @@
+#!/bin/bash
+/bin/python3 /etc/oura/oura_post_to_influxdb.py

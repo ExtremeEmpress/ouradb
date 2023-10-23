@@ -1,9 +1,22 @@
 from datetime import datetime, timedelta
-from influxdb import InfluxDBClient
+import influxdb_client, os, time
+from influxdb_client import WritePrecision, InfluxDBClient, Point
+from influxdb_client.client.write_api import SYNCHRONOUS
 import requests
 import argparse
 import json
 import re
+
+#Influxdb2 info
+INFLUXDB_TOKEN = open('/etc/oura/INFLUXDBTOKEN.txt','r').read(88)
+org = "my-org"
+bucket ="my-bucket"
+url = "http://2.2.2.3:8086"
+client_ouradb = influxdb_client.InfluxDBClient(url=url, token=INFLUXDB_TOKEN, org=org)
+write_api = client_ouradb.write_api(write_options=SYNCHRONOUS)
+
+pat = open('/etc/oura/PAT.txt','r').read(32)
+
 
 def fetch_data(start, end, datatype, pat_data):
     url = f"https://api.ouraring.com/v2/usercollection/{datatype}"
@@ -108,30 +121,13 @@ else:
     start_date = datetime.strptime(args.start,'%Y-%m-%d') + timedelta(days=1)
     end_date = datetime.strptime(args.end,'%Y-%m-%d') + timedelta(days=1)
 
-   
-pat = open("/etc/oura/PAT.txt","r").read(32)
-
-client_ouradb = InfluxDBClient(host="localhost", port=8086, database="ouradb")
-
-# If you wish to reduce queries to the Oura API, you can uncomment the following steps.
-# This way no more queries are done after data has already been received that day.
-# Note that if you wake up early, look at the Oura app, and then sleep more, uncommenting
-# the following rows will cause that any updated data is not posted to the database from that day.
-
-#if only_today:
-#    a = client_ouradb.query("Select * from oura_measurements where bedtime_end =~ /{}/".format(end_date.strftime('%Y-%m-%d')))
-#    if a:
-#        print("Data for today already exists in DB")
-#        exit()
-
-
 
 # Go through all days between start and end dates
 
 while start_date <= end_date:
     data = get_data_one_day(end_date.strftime('%Y-%m-%d'),pat)
-    client_ouradb.write_points(data)
-    #print(end_date)
+    write_api.write(bucket=bucket, org=org, record=data)
+    print(end_date)
     #print(json.dumps(data, indent=4))
     end_date = end_date - timedelta(days=1)
 
