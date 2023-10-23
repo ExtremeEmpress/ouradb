@@ -37,7 +37,7 @@ user@machine:~/repos/ouradb$ python3 oura/oura_query.py --pat=XXXXXXXXXXXXXXXXXX
 
 ## Third Step: Build and run the docker image
 
-Now you need to build and run the image. When the image runs for the first time, it posts the current day's data to the database.
+Now you need to build and run the image. 
 
 ```sh
 docker build -t ourapython .
