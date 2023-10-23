@@ -75,6 +75,8 @@ hkMQ225Qju91YaKm6wq2lo1r3-0J_dfF85j7Ff3trjCEkmCFIc-yzLEZubRcB7mL_vXYMpIilp7yrttY
 ```sh
 docker volume remove OuraDB-influxdb
 docker volume create OuraDB-influxdb
+docker build -t ourapython .
+docker compose up -d
 ```
 ## Fourth Step: Post old data to the database
 
