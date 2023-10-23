@@ -64,15 +64,18 @@ To stop the stack:
 docker compose down
 ```
 
-## NOTE: The stack comes with a token for influxdb2 preconfigured, it is recommended to change this. This can be generated inside the web panel in influxdb localhost:8086. After chaging the value in these two locations below and rebuilding the ourapython image, the stack will be initialized with a non-default token. 
+# NOTE: The stack comes with a token for influxdb2 preconfigured, it is recommended to change this. This can be generated inside the web panel in influxdb localhost:8086. After chaging the value in these two locations below, rebuilding the ourapython image, and remaking the influxdb volume ,the stack will be initialized with a non-default token.  
 ```sh
 DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=hkMQ225Qju91YaKm6wq2lo1r3-0J_dfF85j7Ff3trjCEkmCFIc-yzLEZubRcB7mL_vXYMpIilp7yrttYYRAiVA==
 ```
-## and in the etc/oura/INFLUXDBTOKEN.txt file
+# and in the etc/oura/INFLUXDBTOKEN.txt file
 ```sh
 hkMQ225Qju91YaKm6wq2lo1r3-0J_dfF85j7Ff3trjCEkmCFIc-yzLEZubRcB7mL_vXYMpIilp7yrttYYRAiVA==
 ```
-
+```sh
+docker volume remove OuraDB-influxdb
+docker volume create OuraDB-influxdb
+```
 ## Fourth Step: Post old data to the database
 
 You probably want to have historic data in the database as well. You can do that by providing the start and end dates for the script oura_post_to_influxdb.py.
