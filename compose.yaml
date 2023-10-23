@@ -1,6 +1,6 @@
 version: '3'
 services:
-  alpine:
+  ourapython:
     container_name: ourapython
     image: ourapython:latest
     networks:
