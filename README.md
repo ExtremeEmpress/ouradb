@@ -1,8 +1,8 @@
-# Docker Image with InfluxDB and Grafana
+# Docker stack with InfluxDB and Grafana
 
-This Docker image is specifically intended for storing Oura sleep data in an InfluxDB database, and being able to easily do queries from the data using Grafana. It also has a cron job which checks for new data to upload to the database once per hour.
+This Docker stack is specifically intended for storing Oura sleep data in an InfluxDB2 database, and being able to easily do queries from the data using Grafana. It also has a cron job which checks for new data to upload to the database once per hour.
 
-The Docker image is based on original work from [Samuele Bistoletti](https://github.com/samuelebistoletti) in the [Docker Image with Telegraf (StatsD), InfluxDB and Grafana](https://github.com/samuelebistoletti/docker-statsd-influxdb-grafana) and specifically on the improvements made by [Phil Hawthorne](https://github.com/philhawthorne) for persistence in [this Docker Image](https://github.com/philhawthorne/docker-influxdb-grafana).
+The Docker image is based on original work from [Samuele Bistoletti](https://github.com/samuelebistoletti) in the [Docker Image with Telegraf (StatsD), InfluxDB and Grafana](https://github.com/samuelebistoletti/docker-statsd-influxdb-grafana) and specifically on the improvements made by [Phil Hawthorne](https://github.com/philhawthorne) for persistence in [this Docker Image](https://github.com/philhawthorne/docker-influxdb-grafana). 
 
 This repository also contains a python script, which can alone be used for querying data from the Oura API.
 
@@ -37,37 +37,47 @@ user@machine:~/repos/ouradb$ python3 oura/oura_query.py --pat=XXXXXXXXXXXXXXXXXX
 
 ## Third Step: Build and run the docker image
 
-Now you need to build and run the image. When the image runs for the first time, it posts the current day's data to the database.
+Now you need to build and run the image. 
 
 ```sh
-docker build -t ouradata .
+docker build -t ourapython .
 ```
 
-After building, you'll need to run the image. You'll want to build it with persistence, to make sure you don't lose your data. Replace the paths with paths suitable for your environment.
+After building, you'll need to run the stack. You'll want to create persistant volumes for influxdb and grafana so you dont lose data
+```sh
+docker volume create OuraDB-grafana
+docker volume create OuraDB-influxdb
+
+```
+
+
+
+To start the stack, run this command inside this directory
 
 ```sh
-docker run -d \
-  --name docker-ouradb \
-  -p 3003:3003 \
-  -p 3004:8083 \
-  -p 8086:8086 \
-  -v /path/for/influxdb:/var/lib/influxdb \
-  -v /path/for/grafana:/var/lib/grafana \
-  ouradata:latest
+docker compose up -d
 ```
 
-To stop the container:
+To stop the stack:
 
 ```sh
-docker stop docker-ouradb
+docker compose down
 ```
 
-To start the container again:
-
+# NOTE: The stack comes with a token for influxdb2 preconfigured, it is recommended to change this. This can be generated inside the web panel in influxdb localhost:8086. After chaging the value in these two locations below, rebuilding the ourapython image, and remaking the influxdb volume ,the stack will be initialized with a non-default token.  
 ```sh
-docker start docker-ouradb
+DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=hkMQ225Qju91YaKm6wq2lo1r3-0J_dfF85j7Ff3trjCEkmCFIc-yzLEZubRcB7mL_vXYMpIilp7yrttYYRAiVA==
 ```
-
+# and in the etc/oura/INFLUXDBTOKEN.txt file
+```sh
+hkMQ225Qju91YaKm6wq2lo1r3-0J_dfF85j7Ff3trjCEkmCFIc-yzLEZubRcB7mL_vXYMpIilp7yrttYYRAiVA==
+```
+```sh
+docker volume remove OuraDB-influxdb
+docker volume create OuraDB-influxdb
+docker build -t ourapython .
+docker compose up -d
+```
 ## Fourth Step: Post old data to the database
 
 You probably want to have historic data in the database as well. You can do that by providing the start and end dates for the script oura_post_to_influxdb.py.
@@ -75,41 +85,40 @@ You probably want to have historic data in the database as well. You can do that
 Example: You got your ring on 1st January 2022. You want to get historic data for the entire January 2022.
 
 ```sh
-docker exec docker-ouradb python3 /etc/oura/oura_post_to_influxdb.py --start=2022-01-01 --end=2022-01-31
+docker exec ourapython python3 /etc/oura/oura_post_to_influxdb.py --start=2022-01-01 --end=2022-01-31
 ```
 
 ## Fifth Step: Create a Grafana dashboard
 
 Next, you want to observe your data in Grafana.
 
-Go to http://localhost:3003 in your browser, and login with username: root, password: root. (Remember to change these!)
+Go to http://localhost:3000 in your browser, and login with username: admin, password: admin. (Remember to change these!)
 
 You will first need to add InfluxDB as a datasource.
 
 ```
-1. On the left panel, select the cogwheel ("Configuration") > Data Sources.
-2. Select "Add data source".
+1. On the left panel, select connections
+2. Select datasource, "Add data source".
 3. Select InfluxDB.
-4. Under "HTTP" > "URL", manually insert "http://localhost:8086". (Even though it looks like it already is there!)
-5. Under "InfluxDB Details", set:
-  - Database: ouradb
+4. Under Query langauge, select flux, which is compatible with influxdb2. InfluxQL does not work with influxdb2
+6. Under "HTTP" > "URL", manually insert "http://2.2.2.3:8086". (Even though it looks like it already is there!)
+6. Under "InfluxDB Details", set:
+  - Org: my-org
   - User: root
-  - Password: root
+  - Token: INFLUXDBTOKEN
+  - bucket: my-bucket
 6. Select "Save & Test".
 ```
 
-Now, you want to create a dashboard. As an example we will create a dashboard with a panel showing temperatures ("temperature_deviation").
+Now, you want to construct dashboard panels
 
 ```
 1. On the left, select "+" > "Create".
 2. Select "Add new panel".
-3. At the bottom, in the Query section, select:
-  FROM default oura_measurements WHERE
-  SELECT field(temperature_deviation) last()
-  GROUP BY time($_interval) fill(linear)
-4. On the right side, give the Panel a title.
-5. On the top right, select "Save". Give your Dashboard a name.
-6. To change the amount of days showing on the panel, at the top right you can change the time. Select for example "Last 30 days".
+3. The flux language syntax takes some getting used to. The following will return all the data for given dates. You can further filter it down with more |>'s
+from(bucket: "my-bucket")
+  |> range(start: 2023-10-20, stop: 2023-10-22)
+4. Be sure to change the time frame on the right column to something other than 6 hours.
 ```
 
 Now you are ready to start creating your own panels and exploring your Oura data!

@@ -1,0 +1,51 @@
+version: '3'
+services:
+  ourapython:
+    container_name: ourapython
+    image: ourapython:latest
+    networks:
+      ouranet:
+        ipv4_address: 2.2.2.2
+
+  influxdb2:
+    container_name: ourainfluxdb2
+    image: influxdb:2.7.3-alpine
+    networks:
+      ouranet:
+        ipv4_address: 2.2.2.3
+    ports:
+      - "8086:8086"
+    volumes:
+      - OuraDB-influxdb:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=root
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password
+      - DOCKER_INFLUXDB_INIT_ORG=my-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=hkMQ225Qju91YaKm6wq2lo1r3-0J_dfF85j7Ff3trjCEkmCFIc-yzLEZubRcB7mL_vXYMpIilp7yrttYYRAiVA==
+      
+  grafana:
+    container_name: ouragrafana
+    image: grafana/grafana:latest
+    networks:
+      ouranet:
+        ipv4_address: 2.2.2.4
+    ports:
+      - "3003:3003"
+      - "3000:3000"
+    volumes:
+      - OuraDB-grafana:/var/lib/grafana
+
+volumes: 
+ OuraDB-influxdb:
+   external: true
+ OuraDB-grafana:
+   external: true
+ 
+
+networks:
+  ouranet:
+    ipam:
+      config:
+        - subnet: 2.2.2.0/24
